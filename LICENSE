@@ -1,12 +1,8 @@
-dosamba
-=======
-
-Puppet module to setup a basic set of samba shares
-
-Copyright and License
----------------------
+Devopera Samba module - Puppet
 
 Copyright (C) 2012 Lightenna Ltd
+
+Devopera can be contacted at: inform@lightenna.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
