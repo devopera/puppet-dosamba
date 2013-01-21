@@ -4,6 +4,8 @@ class dosamba (
   # ---------------
   # setup defaults
 
+  $user = 'web',
+  $user_password = 'admLn**',
   $workgroup = 'WORKGROUP',
 
   # end of class arguments
@@ -34,6 +36,14 @@ class dosamba (
       ],
     },
     selinux_enable_home_dirs => true,
+  }->
+  
+  # set password for user
+  exec { 'dosamba-set-mainuser-password':
+    path => '/bin:/usr/bin',
+    provider => 'shell',
+    command => "bash -c '(echo \'${user_password}\'; echo \'${user_password}\') | smbpasswd -as ${user}'",
+    user => 'root',
   }->
   
   # then setup firewall rules
