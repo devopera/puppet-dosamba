@@ -1,3 +1,6 @@
+#
+# requires docommon
+#
 class dosamba (
 
   # class arguments
@@ -66,6 +69,9 @@ class dosamba (
     action => 'accept',
     proto  => 'udp',
     dport  => '445',
+    notify  => Exec['persist-firewall'],
+    before  => Class['docommon::firewall::post'],
+    require => Class['docommon::firewall::pre'],
   }
   
   # also install a samba client for testing
