@@ -16,6 +16,9 @@ class dosamba (
   # begin class
 
 ) {
+  # fix samba module bug; set selboolean default to persistent
+  Selboolean { persistent => true }
+  
   # install and configure samba
   class { 'samba::server':
     workgroup            => $workgroup,
