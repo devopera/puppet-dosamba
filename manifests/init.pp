@@ -11,7 +11,8 @@ class dosamba (
   $user_password = 'admLn**',
   $workgroup = 'WORKGROUP',
   $selinux_enable_home_dirs = true,
-  $selinux_enable_www_dirs = true,
+  $selinux_enable_www_dirs = false,
+  $selinux_enable_all_dirs = true,
 
   # end of class arguments
   # ----------------------
@@ -47,12 +48,30 @@ class dosamba (
   }
   
   # manually give samba SELinux access to www directories
+  # note: this gets wiped out by git checkouts
   if ($selinux_enable_www_dirs) {
     exec { 'dosamba-enable-www-dirs' :
       path => '/bin:/usr/bin:/usr/sbin',
       provider => 'shell',
-      command => "bash -c \"semanage fcontext -a -t public_content_rw_t '/var/www(/.*)?'; restorecon -R /var/www; setsebool -P allow_smbd_anon_write 1; setsebool -P allow_httpd_anon_write 1\"",
+      command => "bash -c \"semanage fcontext -a -t public_content_rw_t '/var/www(/.*)?'; restorecon -R /var/www\"",
       user => 'root',
+      require => Class['samba::server'],
+    }->
+    selboolean { 'allow_smbd_anon_write' :
+      value => 'on',
+      persistent => 'true',
+    }->
+    selboolean { 'allow_httpd_anon_write' :
+      value => 'on',
+      persistent => 'true',
+    }
+  }
+  
+  # open up selinux access for samba across all directories (suitable for dev machines only)
+  if ($selinux_enable_all_dirs) {
+    selboolean { 'samba_export_all_rw' :
+      value => 'on',
+      persistent => 'true',
       require => Class['samba::server'],
     }
   }
