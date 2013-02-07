@@ -114,4 +114,7 @@ class dosamba (
   package { 'samba-client' :
     ensure => present,
   }
+
+  # if we've got a message of the day, include samba
+  @domotd::register { 'Samba(139)' : }
 }
