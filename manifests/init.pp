@@ -42,6 +42,8 @@ class dosamba (
         'comment = Home Directories',
         'browseable = no',
         'writable = yes',
+        'create mask = 0640',
+        'directory mask = 0750',
       ],
     },
     selinux_enable_home_dirs => $selinux_enable_home_dirs,
