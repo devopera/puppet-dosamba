@@ -3,6 +3,13 @@ dosamba
 
 Puppet module to setup a basic set of samba shares
 
+Changelog
+---------
+
+2013-04-30
+
+ * Moved firewall out to firewall.pp and over to example42 standard
+
 Copyright and License
 ---------------------
 

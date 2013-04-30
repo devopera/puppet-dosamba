@@ -7,12 +7,13 @@ class dosamba (
   # ---------------
   # setup defaults
 
-  $user = 'web',
-  $user_password = 'admLn**',
-  $workgroup = 'WORKGROUP',
+  $user                     = 'web',
+  $user_password            = 'admLn**',
+  $workgroup                = 'WORKGROUP',
   $selinux_enable_home_dirs = true,
-  $selinux_enable_www_dirs = false,
-  $selinux_enable_all_dirs = true,
+  $selinux_enable_www_dirs  = false,
+  $selinux_enable_all_dirs  = true,
+  $firewall                 = true,
 
   # end of class arguments
   # ----------------------
@@ -48,7 +49,12 @@ class dosamba (
     },
     selinux_enable_home_dirs => $selinux_enable_home_dirs,
   }
-  
+
+  # open up firewall ports 
+  if ($firewall) {
+    class { 'dosamba::firewall' : }
+  }
+
   # manually give samba SELinux access to www directories
   # note: this gets wiped out by git checkouts
   if ($selinux_enable_www_dirs) {
@@ -85,31 +91,6 @@ class dosamba (
     command => "bash -c '(echo \'${user_password}\'; echo \'${user_password}\') | smbpasswd -as ${user}'",
     user => 'root',
     require => Class['samba::server'],
-  }->
-  
-  # then setup firewall rules
-  firewall { '00137 NetBIOS Name Service':
-    action => 'accept',
-    proto  => 'udp',
-    dport  => '137',
-  }->
-  firewall { '00138 NetBIOS Datagram Service':
-    action => 'accept',
-    proto  => 'udp',
-    dport  => '138',
-  }->
-  firewall { '00139 NetBIOS Session Service':
-    action => 'accept',
-    proto  => 'tcp',
-    dport  => '139',
-  }->
-  firewall { '00445 Microsoft Directory Service':
-    action => 'accept',
-    proto  => 'udp',
-    dport  => '445',
-    notify  => Exec['persist-firewall'],
-    before  => Class['docommon::firewall::post'],
-    require => Class['docommon::firewall::pre'],
   }
   
   # also install a samba client for testing
