@@ -6,6 +6,10 @@ Puppet module to setup a basic set of samba shares
 Changelog
 ---------
 
+2013-05-21
+
+ * Stopped Samba looking for CUPS by using load printers = no
+
 2013-04-30
 
  * Moved firewall out to firewall.pp and over to example42 standard

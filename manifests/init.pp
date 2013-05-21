@@ -37,6 +37,11 @@ class dosamba (
       'wide links = yes',
       'unix extensions = no',
       'encrypt passwords = yes',
+      'load printers = no',
+      'printing = bsd',
+      'printcap name = /dev/null',
+      'show add printer wizard = no',
+      'disable spoolss = yes',
     ],
     shares => {
       'homes' => [
