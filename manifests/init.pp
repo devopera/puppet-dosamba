@@ -20,9 +20,6 @@ class dosamba (
   # begin class
 
 ) {
-  # fix samba module bug; set selboolean default to persistent
-  Selboolean { persistent => true }
-  
   # install and configure samba
   class { 'samba::server':
     workgroup            => $workgroup,
@@ -60,32 +57,39 @@ class dosamba (
     class { 'dosamba::firewall' : }
   }
 
-  # manually give samba SELinux access to www directories
-  # note: this gets wiped out by git checkouts
-  if ($selinux_enable_www_dirs) {
-    exec { 'dosamba-enable-www-dirs' :
-      path => '/bin:/usr/bin:/usr/sbin',
-      provider => 'shell',
-      command => "bash -c \"semanage fcontext -a -t public_content_rw_t '/var/www(/.*)?'; restorecon -R /var/www\"",
-      user => 'root',
-      require => Class['samba::server'],
-    }->
-    selboolean { 'allow_smbd_anon_write' :
-      value => 'on',
-      persistent => 'true',
-    }->
-    selboolean { 'allow_httpd_anon_write' :
-      value => 'on',
-      persistent => 'true',
+  # if we're running SELinux
+  if ($::selinux) {
+
+    # fix samba module bug; set selboolean default to persistent
+    Selboolean { persistent => true }
+
+    # manually give samba SELinux access to www directories
+    # note: this gets wiped out by git checkouts
+    if ($selinux_enable_www_dirs) {
+      exec { 'dosamba-enable-www-dirs' :
+        path => '/bin:/usr/bin:/usr/sbin',
+        provider => 'shell',
+        command => "bash -c \"semanage fcontext -a -t public_content_rw_t '/var/www(/.*)?'; restorecon -R /var/www\"",
+        user => 'root',
+        require => Class['samba::server'],
+      }->
+      selboolean { 'allow_smbd_anon_write' :
+        value => 'on',
+        persistent => 'true',
+      }->
+      selboolean { 'allow_httpd_anon_write' :
+        value => 'on',
+        persistent => 'true',
+      }
     }
-  }
   
-  # open up selinux access for samba across all directories (suitable for dev machines only)
-  if ($selinux_enable_all_dirs) {
-    selboolean { 'samba_export_all_rw' :
-      value => 'on',
-      persistent => 'true',
-      require => Class['samba::server'],
+    # open up selinux access for samba across all directories (suitable for dev machines only)
+    if ($selinux_enable_all_dirs) {
+      selboolean { 'samba_export_all_rw' :
+        value => 'on',
+        persistent => 'true',
+        require => Class['samba::server'],
+      }
     }
   }
   
