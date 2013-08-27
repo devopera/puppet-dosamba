@@ -10,9 +10,22 @@ class dosamba (
   $user                     = 'web',
   $user_password            = 'admLn**',
   $workgroup                = 'WORKGROUP',
+  $security                 = 'user',
+  $username_map             = undef,
   $selinux_enable_home_dirs = true,
   $selinux_enable_www_dirs  = false,
   $selinux_enable_all_dirs  = true,
+  $printing                 = 'bsd',
+  $printcap_name            = '/dev/null',
+  $shares = {
+    'homes' => [
+      'comment = Home Directories',
+      'browseable = no',
+      'writable = yes',
+      'create mask = 0640',
+      'directory mask = 0750',
+    ],
+  },
   $firewall                 = true,
 
   # end of class arguments
@@ -23,6 +36,8 @@ class dosamba (
   # install and configure samba
   class { 'samba::server':
     workgroup            => $workgroup,
+    security             => $security,
+    map_to_guest         => 'Bad User',
     server_string        => "${::hostname} on ${workgroup} workgroup",
     netbios_name         => "${::hostname}",
     interfaces           => [ 'lo', 'eth0' ],
@@ -30,25 +45,19 @@ class dosamba (
     max_log_size         => 50,
     local_master         => 'no',
     extra_global_options => [
-      'follow symlinks = yes',
-      'wide links = yes',
-      'unix extensions = no',
+      'follow symlinks   = yes',
+      'wide links        = yes',
+      'unix extensions   = no',
       'encrypt passwords = yes',
-      'load printers = no',
-      'printing = bsd',
-      'printcap name = /dev/null',
-      'show add printer wizard = no',
-      'disable spoolss = yes',
+      'map archive       = no',
+      "username map      = ${username_map}",
+      "printing          = ${printing}",
+      "printcap name     = ${printcap_name}",
+      # 'show add printer wizard = no',
+      # 'load printers   = no',
+      # 'disable spools = yes',
     ],
-    shares => {
-      'homes' => [
-        'comment = Home Directories',
-        'browseable = no',
-        'writable = yes',
-        'create mask = 0640',
-        'directory mask = 0750',
-      ],
-    },
+    shares => $shares,
     selinux_enable_home_dirs => $selinux_enable_home_dirs,
   }
 
