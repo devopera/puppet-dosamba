@@ -36,8 +36,9 @@ class dosamba (
   # install and configure samba
   class { 'samba::server':
     workgroup            => $workgroup,
-    security             => $security,
-    map_to_guest         => 'Bad User',
+    # temporarily removed two new fields because samba needs a patch downstream
+    # security             => $security,
+    # map_to_guest         => 'Bad User',
     server_string        => "${::hostname} on ${workgroup} workgroup",
     netbios_name         => "${::hostname}",
     interfaces           => [ 'lo', 'eth0' ],
