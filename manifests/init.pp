@@ -37,8 +37,8 @@ class dosamba (
   class { 'samba::server':
     workgroup            => $workgroup,
     # temporarily removed two new fields because samba needs a patch downstream
-    # security             => $security,
-    # map_to_guest         => 'Bad User',
+    security             => $security,
+    map_to_guest         => 'Bad User',
     server_string        => "${::hostname} on ${workgroup} workgroup",
     netbios_name         => "${::hostname}",
     interfaces           => [ 'lo', 'eth0' ],
@@ -60,6 +60,7 @@ class dosamba (
     ],
     shares => $shares,
     selinux_enable_home_dirs => $selinux_enable_home_dirs,
+    selinux_export_all_rw    => $selinux_enable_all_dirs,
   }
 
   # open up firewall ports 
@@ -90,15 +91,6 @@ class dosamba (
       selboolean { 'allow_httpd_anon_write' :
         value => 'on',
         persistent => 'true',
-      }
-    }
-  
-    # open up selinux access for samba across all directories (suitable for dev machines only)
-    if ($selinux_enable_all_dirs) {
-      selboolean { 'samba_export_all_rw' :
-        value => 'on',
-        persistent => 'true',
-        require => Class['samba::server'],
       }
     }
   }
