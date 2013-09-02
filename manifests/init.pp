@@ -11,7 +11,7 @@ class dosamba (
   $user_password            = 'admLn**',
   $workgroup                = 'WORKGROUP',
   $security                 = 'user',
-  $username_map             = undef,
+  $username_map             = '#',
   $selinux_enable_home_dirs = true,
   $selinux_enable_www_dirs  = false,
   $selinux_enable_all_dirs  = true,
