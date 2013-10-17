@@ -26,13 +26,28 @@ class dosamba (
       'directory mask = 0750',
     ],
   },
+
+  # open up firewall ports and monitor
   $firewall                 = true,
+  $monitor                  = true,
 
   # end of class arguments
   # ----------------------
   # begin class
 
 ) {
+
+  # open up firewall ports and monitor
+  if ($firewall) {
+    class { 'dosamba::firewall' : }
+  }
+  if ($monitor) {
+    class { 'dosamba::monitor' : }
+  }
+
+  # if we've got a message of the day, include samba
+  @domotd::register { 'Samba(139)' : }
+  
   # install and configure samba
   class { 'samba::server':
     workgroup            => $workgroup,
@@ -61,11 +76,6 @@ class dosamba (
     shares => $shares,
     selinux_enable_home_dirs => $selinux_enable_home_dirs,
     selinux_export_all_rw    => $selinux_enable_all_dirs,
-  }
-
-  # open up firewall ports 
-  if ($firewall) {
-    class { 'dosamba::firewall' : }
   }
 
   # if we're running SELinux
@@ -109,6 +119,4 @@ class dosamba (
     ensure => present,
   }
 
-  # if we've got a message of the day, include samba
-  @domotd::register { 'Samba(139)' : }
 }
