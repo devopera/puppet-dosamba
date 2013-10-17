@@ -42,7 +42,14 @@ class dosamba (
     class { 'dosamba::firewall' : }
   }
   if ($monitor) {
-    class { 'dosamba::monitor' : }
+    class { 'dosamba::monitor' :
+      user => $user,
+      password => $user_password,
+      # test share on username
+      # @todo parameterise because may not be sharing homes
+      share => $user,
+      workgroup => $workgroup,
+    }
   }
 
   # if we've got a message of the day, include samba
