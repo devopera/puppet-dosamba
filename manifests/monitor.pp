@@ -17,7 +17,7 @@ class dosamba::monitor (
 ) {
 
   # check that the samba share is working
-  @nagios::service { "smb:${port}-dosamba-${::hostname}":
+  @nagios::service { "smb:${port}-dosamba-${::fqdn}":
     check_command => "check_disk_smb!${::hostname}!${share}!${workgroup}!${::ipaddress}!${user}!${password}",
   }
 
