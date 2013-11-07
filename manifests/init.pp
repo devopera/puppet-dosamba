@@ -86,7 +86,7 @@ class dosamba (
   }
 
   # if we're running SELinux
-  if ($::selinux) {
+  if (str2bool($::selinux)) {
 
     # fix samba module bug; set selboolean default to persistent
     Selboolean { persistent => true }
