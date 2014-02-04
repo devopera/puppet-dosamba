@@ -18,7 +18,7 @@ class dosamba::monitor (
 
   # check that samba is running as a service
   @nagios::service { "int:process_smbd-dosamba-${::fqdn}":
-    check_command => "check_procs!1:!1:!'smbd'",
+    check_command => "check_nrpe_procs_smbd",
   }
 
   # check that the samba share is working
