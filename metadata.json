@@ -1,0 +1,14 @@
+{
+  "name": "devopera-dosamba",
+  "version": "0.9.0",
+  "author": "(c) Alex Stanhope, Devopera.com",
+  "summary": "Samba installation and configuration module",
+  "license": "Apache License, Version 2.0",
+  "source": "https://github.com/devopera/puppet-dosamba",
+  "project_page": "http://devopera.com/module/dosamba",
+  "description": "",
+  "issues_url": "https://github.com/devopera/puppet-dosamba/issues",
+  "dependencies": [
+    {"name":"thias/samba","version_requirement":"0.1.0"}
+  ]
+}
